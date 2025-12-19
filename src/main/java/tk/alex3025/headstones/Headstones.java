@@ -6,6 +6,7 @@ import tk.alex3025.headstones.commands.HeadstonesCommand;
 import tk.alex3025.headstones.commands.subcommands.ClearDatabaseCommand;
 import tk.alex3025.headstones.commands.subcommands.ListHeadstonesCommand;
 import tk.alex3025.headstones.commands.subcommands.ReloadConfigCommand;
+import tk.alex3025.headstones.commands.subcommands.TeleportHeadstoneCommand;
 import tk.alex3025.headstones.listeners.BlockBreakListener;
 import tk.alex3025.headstones.listeners.PlayerDeathListener;
 import tk.alex3025.headstones.listeners.RightClickListener;
@@ -53,6 +54,7 @@ public final class Headstones extends JavaPlugin {
         new ClearDatabaseCommand();
         new ReloadConfigCommand();
         new ListHeadstonesCommand();
+        new TeleportHeadstoneCommand();
     }
 
     public static Headstones getInstance() {

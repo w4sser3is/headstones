@@ -29,3 +29,6 @@ permissions:
   headstones.list:
     description: Allows the player to see the coordinates of his headstones.
     default: true
+  headstones.tp:
+    description: Allows the player to teleport to his headstones.
+    default: true
