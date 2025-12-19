@@ -13,11 +13,15 @@ public class BlockBreakListener extends ListenerBase {
         Headstone headstone = Headstone.fromBlock(event.getBlock());
 
         if (headstone != null)
-            if (headstone.isOwner(event.getPlayer()))
+            if (headstone.isOwner(event.getPlayer())) {
                 headstone.onBreak(event);
-            else {
-                event.setCancelled(true);
-                new Message(event.getPlayer()).translation("cannot-break-others").prefixed(false).send();
+            } else {
+                if (headstone.getOwner().isOnline() && headstone.getOwner().getPlayer().hasPermission("headstones.allow-opponents")) {
+                    headstone.onBreak(event);
+                } else {
+                    event.setCancelled(true);
+                    new Message(event.getPlayer()).translation("cannot-break-others").prefixed(false).send();
+                }
             }
     }
 
