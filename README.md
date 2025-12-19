@@ -1,25 +1,36 @@
 # Headstones
 _Don't lose your precious items when you die!_
 
-<br>
-
-![img](https://i.imgur.com/APOieA9.png)
-
-#### You can find more informations [on the Spigot MC page](https://www.spigotmc.org/resources/headstones.105462/), like commands and permissions!
-
 **Headstones** is a plugin that adds a simple mechanic to the game:
-<br>
 When a player dies, its inventory and experience will be **safely stored** in a _headstone_.
 
 To get the stuff back, only the player who died can break its headstone.
 
----
+## Commands
 
-### Need help?
-Feel free to [DM me on Spigot](https://www.spigotmc.org/conversations/add?to=alex3025) or reach me out on Discord: **αℓєχ3025#2994**
+| Command | Permission | Description |
+|---|---|---|
+| `/hs list` | `headstones.list` | Shows a numbered list of your active headstones with their coordinates. |
+| `/hs tp <number>` | `headstones.tp` | Teleports you to the specified headstone. |
+| `/hs reload` | `headstones.reload` | Reloads the configuration and messages. |
+| `/hs cleardb` | `headstones.cleardb` | Clears all saved headstones data. |
 
+## Permissions
 
-### Do you like this plugin?
-If you do, I'll be very happy if you'll leave a nice review [on the Spigot page](https://www.spigotmc.org/resources/headstones.105462/).
+| Permission | Default | Description |
+|---|---|---|
+| `headstones.list` | `true` | Allows listing your headstones. |
+| `headstones.tp` | `true` | Allows teleporting to your headstones. |
+| `headstones.keep-experience` | `true` | Controls if experience is stored in the headstone. |
+| `headstones.keep-inventory` | `true` | Controls if inventory is stored in the headstone. |
+| `headstones.reload` | `op` | Allows reloading the plugin. |
+| `headstones.cleardb` | `op` | Allows clearing the database. |
 
-###### (please use the review section for reviews only, not bug reports or help requests. DM me instead)
+## Release Notes
+
+### Version 1.0.0
+- Added `/hs tp <number>` command to teleport to headstones.
+- Updated `/hs list` to show a numbered list.
+
+## Credits
+Author: alex3025
