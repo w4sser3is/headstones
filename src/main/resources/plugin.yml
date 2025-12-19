@@ -9,5 +9,20 @@ main: tk.alex3025.headstones.Headstones
 
 commands:
   headstones:
+    description: Shows my name and the plugin's version.
     aliases: [ hs, headstone ]
     usage: /headstones
+
+permissions:
+  headstones.reload:
+    description: Reloads the configuration and translations file.
+    default: op
+  headstones.cleardb:
+    description: Dangerous command to make all the existing heastones useless.
+    default: op
+  headstones.keep-experience:
+    description: Allows the player to get his experience back when he breaks its headstone.
+    default: true
+  headstones.keep-inventory:
+    description: Same as above but for the inventory(items).
+    default: true
