@@ -32,3 +32,6 @@ permissions:
   headstones.tp:
     description: Allows the player to teleport to his headstones.
     default: true
+  headstones.allow-opponents:
+    description: Controls if the opponent can loot headstone.
+    default: false
