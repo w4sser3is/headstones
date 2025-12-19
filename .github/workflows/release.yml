@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Extract version from tag (strip leading 'v')
+      env:
+        TAG_NAME: ${{ github.event.release.tag_name }}
+      run: |
+        echo "Tag name: $TAG_NAME"
+        VERSION="${TAG_NAME#v}"
+        echo "Using version: $VERSION"
+        echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+    - name: Set Maven project version
+      run: ./mvnw -B versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false --file pom.xml
+
+    - name: Update plugin.yml version
+      run: sed -i "s/^version: .*/version: '${{ env.VERSION }}'/" src/main/resources/plugin.yml
+
+    - name: Build with Maven
+      run: ./mvnw -B package --file pom.xml
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: target/adminsupport-${{ env.VERSION }}.jar
+        asset_name: adminsupport-${{ env.VERSION }}.jar
+        asset_content_type: application/java-archive
