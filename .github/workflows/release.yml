@@ -34,7 +34,8 @@ jobs:
       run: ./mvnw -B versions:set -DnewVersion=${{ env.VERSION }} -DgenerateBackupPoms=false --file pom.xml
 
     - name: Update plugin.yml version
-      run: sed -i "s/^version: .*/version: '${{ env.VERSION }}'/" src/main/resources/plugin.yml
+      run: |
+        sed -i "s/^version: .*/version: '${{ env.VERSION }}'/" src/main/resources/plugin.yml
 
     - name: Build with Maven
       run: ./mvnw -B package --file pom.xml
@@ -45,6 +46,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: target/adminsupport-${{ env.VERSION }}.jar
-        asset_name: adminsupport-${{ env.VERSION }}.jar
+        asset_path: target/Headstones-${{ env.VERSION }}.jar
+        asset_name: Headstones-${{ env.VERSION }}.jar
         asset_content_type: application/java-archive
