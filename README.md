@@ -2,7 +2,7 @@
 
 Don't lose your precious items when you die!
 When a player dies, its inventory and experience will be safely stored in a headstone.
-To get the stuff back, only the player who died can break its headstone.
+To get the stuff back, only the player who died can break its headstone (unless configured otherwise to allow looting).
 
 ## Commands
 
@@ -33,6 +33,9 @@ To get the stuff back, only the player who died can break its headstone.
 *   `headstones.keep-inventory`
     *   **Description:** Allows the player to retrieve their inventory items when they break their headstone.
     *   **Default:** `true` (Everyone)
+*   `headstones.allow-opponents`
+    *   **Description:** If a player has this permission, other players are allowed to break their headstone and loot the inventory/experience. The owner must be online for this to work.
+    *   **Default:** `false` (Must be explicitly granted)
 *   `headstones.reload`
     *   **Description:** Grants access to the `/headstones reload` command.
     *   **Default:** `op` (Operators only)
