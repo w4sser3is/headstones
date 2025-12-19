@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import tk.alex3025.headstones.commands.HeadstonesCommand;
 import tk.alex3025.headstones.commands.subcommands.ClearDatabaseCommand;
+import tk.alex3025.headstones.commands.subcommands.ListHeadstonesCommand;
 import tk.alex3025.headstones.commands.subcommands.ReloadConfigCommand;
 import tk.alex3025.headstones.listeners.BlockBreakListener;
 import tk.alex3025.headstones.listeners.PlayerDeathListener;
@@ -51,6 +52,7 @@ public final class Headstones extends JavaPlugin {
         // Subcommands
         new ClearDatabaseCommand();
         new ReloadConfigCommand();
+        new ListHeadstonesCommand();
     }
 
     public static Headstones getInstance() {

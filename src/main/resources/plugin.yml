@@ -26,3 +26,6 @@ permissions:
   headstones.keep-inventory:
     description: Same as above but for the inventory(items).
     default: true
+  headstones.list:
+    description: Allows the player to see the coordinates of his headstones.
+    default: true
