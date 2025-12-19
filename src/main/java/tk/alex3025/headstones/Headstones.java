@@ -39,9 +39,10 @@ public final class Headstones extends JavaPlugin {
     }
 
     private void registerListeners() {
-        new PlayerDeathListener();
-        new BlockBreakListener();
-        new RightClickListener();
+        org.bukkit.plugin.PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerDeathListener(), this);
+        pm.registerEvents(new BlockBreakListener(), this);
+        pm.registerEvents(new RightClickListener(), this);
     }
 
     private void registerCommands() {
