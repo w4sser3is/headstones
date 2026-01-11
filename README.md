@@ -24,8 +24,12 @@ To get the stuff back, only the player who died can break its headstone.
 | `headstones.allow-opponents`| `false` | Controls if the opponent can loot headstone. |
 | `headstones.reload` | `op` | Allows reloading the plugin. |
 | `headstones.cleardb` | `op` | Allows clearing the database. |
+| `headstones.disabled.<world_name>` | `false` | Disables headstones in a specific world. |
 
 ## Release Notes
+
+### Version 1.3.0
+- Added ability to disable headstones in specific worlds via permission `headstones.disabled.<world_name>`.
 
 ### Version 1.2.0
 - Added `/hs tp <number>` command to teleport to headstones.
