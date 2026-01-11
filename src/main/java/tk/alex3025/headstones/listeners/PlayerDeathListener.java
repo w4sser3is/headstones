@@ -18,6 +18,9 @@ public class PlayerDeathListener extends ListenerBase {
         // Check if the player is a chunk loader from the WildLoaders plugin
         if (player instanceof ChunkLoaderNPC) return;
 
+        // Check if the plugin is disabled for the player's current world
+        if (player.hasPermission("headstones.disabled." + player.getWorld().getName())) return;
+
         boolean keepExperience = !event.getKeepLevel() && player.hasPermission("headstones.keep-experience");
         boolean keepInventory = !event.getKeepInventory() && player.hasPermission("headstones.keep-inventory");
 
