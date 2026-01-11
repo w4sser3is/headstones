@@ -35,3 +35,6 @@ permissions:
   headstones.allow-opponents:
     description: Controls if the opponent can loot headstone.
     default: false
+  headstones.disabled.*:
+    description: Disables the creation of headstones in a specific world.
+    default: false
