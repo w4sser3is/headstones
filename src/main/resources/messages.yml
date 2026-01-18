@@ -19,6 +19,11 @@ headstone-broken: '&aYou broke your headstone and got all your items back!'
 unknown-subcommand: '&cUnknown subcommand!'
 player-only: '&cThis command can be executed by players only!'
 headstone-info: '&f%username%&7 died here on &f%datetime%&7'
+headstone-destroyed: '&aThe headstone has been destroyed and items returned to &f%username%&a.'
+headstone-not-found: '&cHeadstone not found.'
+invalid-number: '&cInvalid number.'
+usage-destroy: '&cUsage: /hs destroy <player> <index>'
+player-not-found: '&cPlayer not found.'
 
 # These messages will appear on the action bar.
 inventory-full: '&cYour inventory is full!'
