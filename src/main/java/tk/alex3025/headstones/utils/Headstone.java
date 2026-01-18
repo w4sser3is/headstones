@@ -138,7 +138,7 @@ public class Headstone {
         headstonesFile.save();
     }
 
-    private void deletePlayerData() {
+    public void deletePlayerData() {
         ConfigFile headstonesFile = Headstone.getHeadstonesData();
         ConfigurationSection headstones = headstonesFile.getConfigurationSection("headstones");
 
@@ -148,7 +148,7 @@ public class Headstone {
         headstonesFile.save();
     }
 
-    private void restorePlayerInventory(Player player) {
+    public void restorePlayerInventory(Player player) {
         ExperienceManager.setExperience(player, this.experience);
 
         if (this.inventory != null)
@@ -231,7 +231,15 @@ public class Headstone {
         return this.timestamp;
     }
 
-    private static ConfigFile getHeadstonesData() {
+    public ItemStack[] getInventory() {
+        return this.inventory;
+    }
+
+    public int getExperience() {
+        return this.experience;
+    }
+
+    public static ConfigFile getHeadstonesData() {
         return Headstones.getInstance().getDatabase();
     }
 
