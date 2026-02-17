@@ -16,7 +16,7 @@ public class RightClickListener extends ListenerBase {
     @EventHandler
     public void onPlayerInteract(@NotNull PlayerInteractEvent event) {
         if (event.getClickedBlock() != null && event.getAction().isRightClick() && event.getHand().name().equals("HAND")) {
-            Headstone headstone = Headstone.fromBlock(event.getClickedBlock());
+            Headstone headstone = Headstone.fromBlock(event.getClickedBlock(), event.getPlayer());
 
             if (headstone != null)
                 new Message(event.getPlayer(), new HashMap<>() {{

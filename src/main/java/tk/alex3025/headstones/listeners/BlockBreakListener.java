@@ -1,5 +1,6 @@
 package tk.alex3025.headstones.listeners;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
@@ -10,13 +11,14 @@ public class BlockBreakListener extends ListenerBase {
 
     @EventHandler
     public void onBlockBreak(@NotNull BlockBreakEvent event) {
-        Headstone headstone = Headstone.fromBlock(event.getBlock());
+        Headstone headstone = Headstone.fromBlock(event.getBlock(), event.getPlayer());
 
         if (headstone != null)
             if (headstone.isOwner(event.getPlayer())) {
                 headstone.onBreak(event);
             } else {
-                if (headstone.getOwner().getPlayer().hasPermission("headstones.allow-opponents")) {
+                Player owner = headstone.getOwner().getPlayer();
+                if (owner != null && owner.hasPermission("headstones.allow-opponents")) {
                     headstone.onBreak(event);
                 } else {
                     event.setCancelled(true);
