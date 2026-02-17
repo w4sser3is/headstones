@@ -11,7 +11,7 @@ import tk.alex3025.headstones.Headstones;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class MessageTest {
@@ -84,7 +84,7 @@ class MessageTest {
         Map<String, String> placeholders = new HashMap<>();
         placeholders.put("player", "Alex");
 
-        Message message = new Message(sender, placeholders);
+        Message message = new Message(sender).replaceAll(placeholders);
         message.text("Hello %player%").prefixed(false).send();
 
         verify(sender).sendMessage("Hello Alex");

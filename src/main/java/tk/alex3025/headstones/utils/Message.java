@@ -5,23 +5,33 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import tk.alex3025.headstones.Headstones;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Message {
 
-    private String rawMessage;
     private final CommandSender sender;
+    private String rawMessage;
     private Map<String, String> placeholders;
 
     private boolean prefixed = true;
 
     public Message(CommandSender sender) {
         this.sender = sender;
+        this.placeholders = new HashMap<>();
     }
 
-    public Message(CommandSender sender, Map<String, String> placeholders) {
-        this.sender = sender;
-        this.placeholders = placeholders;
+    public static void sendMessage(@NotNull CommandSender sender, String message) {
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+    }
+
+    public static void sendPrefixedMessage(CommandSender sender, String message) {
+        String prefix = Headstones.getInstance().getMessages().getString("prefix");
+        Message.sendMessage(sender, prefix + " " + message);
+    }
+
+    public static String getTranslation(String key) {
+        return Headstones.getInstance().getMessages().getString(key);
     }
 
     public Message text(String message) {
@@ -46,6 +56,11 @@ public class Message {
         return this;
     }
 
+    public Message replaceAll(Map<String, String> values) {
+        this.placeholders.putAll(values);
+        return this;
+    }
+
     public void send() {
         if (this.rawMessage != null && !this.rawMessage.isEmpty()) {
             // Format placeholders
@@ -58,19 +73,6 @@ public class Message {
             else
                 Message.sendMessage(this.sender, this.rawMessage);
         }
-    }
-
-    public static void sendMessage(@NotNull CommandSender sender, String message) {
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-    }
-
-    public static void sendPrefixedMessage(CommandSender sender, String message) {
-        String prefix = Headstones.getInstance().getMessages().getString("prefix");
-        Message.sendMessage(sender, prefix + " " + message);
-    }
-
-    public static String getTranslation(String key) {
-        return Headstones.getInstance().getMessages().getString(key);
     }
 
 }

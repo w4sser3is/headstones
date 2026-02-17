@@ -15,7 +15,6 @@ import tk.alex3025.headstones.utils.Message;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class DestroyHeadstoneCommand extends SubcommandBase {
 
@@ -106,8 +105,9 @@ public class DestroyHeadstoneCommand extends SubcommandBase {
                     .send();
         }
 
-        new Message(sender, Map.of("username", targetPlayer.getName()))
+        new Message(sender)
                 .translation("all-headstones-destroyed")
+                .replace("username", targetPlayer.getName())
                 .replace("count", destroyedCount)
                 .send();
 
