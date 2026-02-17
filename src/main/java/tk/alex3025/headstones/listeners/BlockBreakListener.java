@@ -16,7 +16,7 @@ public class BlockBreakListener extends ListenerBase {
             if (headstone.isOwner(event.getPlayer())) {
                 headstone.onBreak(event);
             } else {
-                if (headstone.getOwner().isOnline() && headstone.getOwner().getPlayer().hasPermission("headstones.allow-opponents")) {
+                if (headstone.getOwner().getPlayer().hasPermission("headstones.allow-opponents")) {
                     headstone.onBreak(event);
                 } else {
                     event.setCancelled(true);
