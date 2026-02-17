@@ -12,16 +12,18 @@ import java.util.Map;
 
 public class ClearDatabaseCommand extends SubcommandBase {
 
-    private final Map<String, Long> waitingConfirmPlayers = new HashMap<>();;
+    private final Map<String, Long> waitingConfirmPlayers = new HashMap<>();
 
     public ClearDatabaseCommand() {
         super("cleardb", "headstones.cleardb");
 
         // Clear waiting players after 10 seconds
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Headstones.getInstance(), () -> {
-            for (Map.Entry<String, Long> entry : this.waitingConfirmPlayers.entrySet())
-                if (System.currentTimeMillis() - entry.getValue() > 10000)
-                    this.waitingConfirmPlayers.remove(entry.getKey());
+            var expired = waitingConfirmPlayers.entrySet().stream()
+                .filter(e -> System.currentTimeMillis() - e.getValue() > 10000)
+                .map(Map.Entry::getKey)
+                .toList();
+            expired.forEach(waitingConfirmPlayers::remove);
         }, 0, 40);
     }
 

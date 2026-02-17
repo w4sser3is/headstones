@@ -67,6 +67,14 @@ public class HeadstonesCommand implements CommandExecutor, TabCompleter {
                     matches.add(subcommand.getName());
 
 			return StringUtil.copyPartialMatches(args[0], matches, new ArrayList<>());
+		} else if (args.length > 1) {
+			// Delegate to subcommand's tab completion
+			SubcommandBase subcommand = SubcommandBase.getSubcommand(args[0]);
+			if (subcommand != null && subcommand.hasPermission(sender)) {
+				String[] subArgs = new String[args.length - 1];
+				System.arraycopy(args, 1, subArgs, 0, args.length - 1);
+				return subcommand.onTabComplete(sender, subArgs);
+			}
 		}
 		return Collections.emptyList();
     }
