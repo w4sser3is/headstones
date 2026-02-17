@@ -33,6 +33,7 @@ public class Headstone {
     private final Location location;
     @Getter
     private final long timestamp;
+    @Getter
     private final int experience;
     @Getter
     private final ItemStack[] inventory;

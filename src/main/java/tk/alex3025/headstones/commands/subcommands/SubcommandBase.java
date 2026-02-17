@@ -37,6 +37,10 @@ public abstract class SubcommandBase {
 
     public abstract boolean onCommand(CommandSender sender, String[] args);
 
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        return List.of();
+    }
+
     public boolean hasPermission(CommandSender sender) {
         return this.getPermission() == null || sender.hasPermission(this.getPermission());
     }

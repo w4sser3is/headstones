@@ -5,14 +5,17 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import tk.alex3025.headstones.utils.ExperienceManager;
 import tk.alex3025.headstones.utils.Headstone;
 import tk.alex3025.headstones.utils.HeadstoneUtils;
 import tk.alex3025.headstones.utils.Message;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class DestroyHeadstoneCommand extends SubcommandBase {
 
@@ -22,7 +25,7 @@ public class DestroyHeadstoneCommand extends SubcommandBase {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (args.length < 2) {
+        if (args.length < 1) {
             new Message(sender).translation("usage-destroy").send();
             return true;
         }
@@ -32,58 +35,94 @@ public class DestroyHeadstoneCommand extends SubcommandBase {
 
         // check if player has played before or is online to avoid accidental wrong names
         if (!targetPlayer.hasPlayedBefore() && !targetPlayer.isOnline()) {
-             new Message(sender).translation("player-not-found").send();
-             return true;
-        }
-
-        int index;
-        try {
-            index = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            new Message(sender).translation("invalid-number").send();
+            new Message(sender).translation("player-not-found").send();
             return true;
         }
 
         List<ConfigurationSection> playerHeadstones = HeadstoneUtils.getPlayerHeadstones(targetPlayer.getUniqueId());
 
-        if (index < 1 || index > playerHeadstones.size()) {
+        if (playerHeadstones.isEmpty()) {
             new Message(sender).translation("headstone-not-found").send();
             return true;
         }
 
-        ConfigurationSection hsSection = playerHeadstones.get(index - 1);
-        String uuid = hsSection.getName();
-        Headstone headstone = Headstone.fromUUID(uuid);
+        int totalExperience = 0;
+        List<ItemStack> allItems = new ArrayList<>();
+        int destroyedCount = 0;
 
-        if (headstone == null) {
-            new Message(sender).translation("headstone-not-found").send();
-            return true;
-        }
+        // Process all headstones
+        for (ConfigurationSection hsSection : playerHeadstones) {
+            String uuid = hsSection.getName();
+            Headstone headstone = Headstone.fromUUID(uuid);
 
-        // 1. Restore items to player if online, otherwise drop them at headstone location
-        if (targetPlayer.isOnline() && targetPlayer.getPlayer() != null) {
-            headstone.restorePlayerInventory(targetPlayer.getPlayer());
-        } else {
-            // Drop items at the headstone location
+            if (headstone == null) {
+                continue;
+            }
+
+            // Collect experience
+            totalExperience += headstone.getExperience();
+
+            // Collect items
             if (headstone.getInventory() != null) {
                 for (ItemStack item : headstone.getInventory()) {
                     if (item != null && item.getType() != Material.AIR) {
-                        headstone.getLocation().getWorld().dropItemNaturally(headstone.getLocation(), item);
+                        allItems.add(item);
                     }
                 }
             }
+
+            // Remove the headstone block
+            if (headstone.getLocation().getBlock().getType() == Material.PLAYER_HEAD) {
+                headstone.getLocation().getBlock().setType(Material.AIR);
+            }
+
+            // Delete from database
+            headstone.deletePlayerData();
+            destroyedCount++;
         }
 
-        // 2. Remove the headstone block
-        if (headstone.getLocation().getBlock().getType() == Material.PLAYER_HEAD) {
-            headstone.getLocation().getBlock().setType(Material.AIR);
+        // Restore items and experience to player if online
+        if (targetPlayer.isOnline() && targetPlayer.getPlayer() != null) {
+            Player onlinePlayer = targetPlayer.getPlayer();
+
+            // Restore experience
+            if (totalExperience > 0) {
+                ExperienceManager.setExperience(onlinePlayer, totalExperience);
+            }
+
+            // Restore items - try to add to inventory, drop excess at player's location
+            for (ItemStack item : allItems) {
+                var remaining = onlinePlayer.getInventory().addItem(item);
+                for (ItemStack droppedItem : remaining.values()) {
+                    // Drop items in front of the player
+                    onlinePlayer.getWorld().dropItemNaturally(onlinePlayer.getLocation().add(0, 0, 1), droppedItem);
+                }
+            }
+
+            // Notify the player
+            new Message(onlinePlayer).translation("headstones-restored")
+                    .replace("count", destroyedCount)
+                    .replace("experience", totalExperience)
+                    .send();
         }
 
-        // 3. Delete from database
-        headstone.deletePlayerData();
-
-        new Message(sender, Map.of("username", targetPlayer.getName())).translation("headstone-destroyed").send();
+        new Message(sender, Map.of("username", targetPlayer.getName()))
+                .translation("all-headstones-destroyed")
+                .replace("count", destroyedCount)
+                .send();
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length == 1) {
+            List<String> completions = new ArrayList<>();
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                completions.add(onlinePlayer.getName());
+            }
+            return completions;
+        }
+        return List.of();
     }
 }

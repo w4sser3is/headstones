@@ -38,6 +38,14 @@ public class Message {
         return this;
     }
 
+    public Message replace(String key, Object value) {
+        if (this.placeholders == null) {
+            this.placeholders = new java.util.HashMap<>();
+        }
+        this.placeholders.put(key, String.valueOf(value));
+        return this;
+    }
+
     public void send() {
         if (this.rawMessage != null && !this.rawMessage.isEmpty()) {
             // Format placeholders

@@ -22,9 +22,13 @@ headstone-info: '&f%username%&7 died here on &f%datetime%&7'
 headstone-destroyed: '&aThe headstone has been destroyed and items returned to &f%username%&a.'
 headstone-not-found: '&cHeadstone not found.'
 invalid-number: '&cInvalid number.'
-usage-destroy: '&cUsage: /hs destroy <player> <index>'
+usage-destroy: '&cUsage: /hs destroy <player>'
 player-not-found: '&cPlayer not found.'
 
 # These messages will appear on the action bar.
 inventory-full: '&cYour inventory is full!'
 some-items-dropped: '&cSome items were dropped on the ground!'
+
+# Destroy all command messages
+all-headstones-destroyed: '&aAll headstones of &f%username%&a have been destroyed. (%count% headstones)'
+headstones-restored: '&aYour &f%count%&a headstones have been restored with &f%experience%&a experience!'
