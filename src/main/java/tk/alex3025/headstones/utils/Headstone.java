@@ -21,6 +21,7 @@ import tk.alex3025.headstones.Headstones;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 public class Headstone {
@@ -190,16 +191,17 @@ public class Headstone {
 
         int radius = 0;
 
-        for (int x = playerX - radius; x <= playerX + radius; x++) {
-            for (int y = playerY - radius; y <= playerY + radius; y++)
-                for (int z = playerZ - radius; z <= playerZ + radius; z++) {
-                    Block block = this.location.getWorld().getBlockAt(x, y, z);
-                    if (block.getType().isAir())
-                        return block;
-                }
+        while (radius <= 5) {
+            for (int x = playerX - radius; x <= playerX + radius; x++) {
+                for (int y = playerY - radius; y <= playerY + radius; y++)
+                    for (int z = playerZ - radius; z <= playerZ + radius; z++) {
+                        Block block = this.location.getWorld().getBlockAt(x, y, z);
+                        if (block.getType().isAir())
+                            return block;
+                    }
+            }
 
-            if (radius <= 5)
-                radius++;
+            radius++;
         }
 
         return null;
@@ -216,13 +218,11 @@ public class Headstone {
 
                 BlockData data = skull.getBlockData();
 
-                List<BlockFace> faces = new ArrayList<>(List.of(BlockFace.values()));
-                // Remove invalid faces
-                faces.remove(BlockFace.UP);
-                faces.remove(BlockFace.DOWN);
-                faces.remove(BlockFace.SELF);
+                var faces = Arrays.stream(BlockFace.values())
+                    .filter(f -> f != BlockFace.UP && f != BlockFace.DOWN && f != BlockFace.SELF)
+                    .toList();
 
-                ((Rotatable) data).setRotation(faces.get(new Random().nextInt(faces.size())));
+                ((Rotatable) data).setRotation(faces.get(ThreadLocalRandom.current().nextInt(faces.size())));
 
                 skull.setBlockData(data);
                 skull.update();

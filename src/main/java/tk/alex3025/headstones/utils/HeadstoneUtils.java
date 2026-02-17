@@ -6,6 +6,7 @@ import tk.alex3025.headstones.Headstones;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class HeadstoneUtils {
@@ -15,20 +16,16 @@ public class HeadstoneUtils {
     }
 
     public static List<ConfigurationSection> getPlayerHeadstones(UUID playerUUID) {
-        List<ConfigurationSection> playerHeadstones = new ArrayList<>();
         ConfigurationSection headstones = Headstones.getInstance().getDatabase().getConfigurationSection("headstones");
 
-        if (headstones != null) {
-            for (String key : headstones.getKeys(false)) {
-                ConfigurationSection hs = headstones.getConfigurationSection(key);
-                if (hs != null) {
-                    String ownerString = hs.getString("owner");
-                    if (ownerString != null && ownerString.equals(playerUUID.toString())) {
-                        playerHeadstones.add(hs);
-                    }
-                }
-            }
+        if (headstones == null) {
+            return List.of();
         }
-        return playerHeadstones;
+
+        return headstones.getKeys(false).stream()
+            .map(headstones::getConfigurationSection)
+            .filter(Objects::nonNull)
+            .filter(hs -> playerUUID.toString().equals(hs.getString("owner")))
+            .toList();
     }
 }

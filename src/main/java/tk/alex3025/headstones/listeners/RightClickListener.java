@@ -9,7 +9,7 @@ import tk.alex3025.headstones.utils.Message;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 public class RightClickListener extends ListenerBase {
 
@@ -19,10 +19,10 @@ public class RightClickListener extends ListenerBase {
             Headstone headstone = Headstone.fromBlock(event.getClickedBlock(), event.getPlayer());
 
             if (headstone != null)
-                new Message(event.getPlayer(), new HashMap<>() {{
-                    put("username", headstone.getOwner().getName());
-                    put("datetime", new SimpleDateFormat(Headstones.getInstance().getConfig().getString("date-format")).format(new Date(headstone.getTimestamp())));
-                }}).translation("headstone-info").send();
+                new Message(event.getPlayer(), Map.of(
+                    "username", headstone.getOwner().getName(),
+                    "datetime", new SimpleDateFormat(Headstones.getInstance().getConfig().getString("date-format")).format(new Date(headstone.getTimestamp()))
+                )).translation("headstone-info").send();
         }
     }
 

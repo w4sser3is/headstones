@@ -10,8 +10,8 @@ import tk.alex3025.headstones.utils.Headstone;
 import tk.alex3025.headstones.utils.HeadstoneUtils;
 import tk.alex3025.headstones.utils.Message;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class DestroyHeadstoneCommand extends SubcommandBase {
@@ -82,9 +82,7 @@ public class DestroyHeadstoneCommand extends SubcommandBase {
         // 3. Delete from database
         headstone.deletePlayerData();
 
-        new Message(sender, new HashMap<>() {{
-            put("username", targetPlayer.getName());
-        }}).translation("headstone-destroyed").send();
+        new Message(sender, Map.of("username", targetPlayer.getName())).translation("headstone-destroyed").send();
 
         return true;
     }

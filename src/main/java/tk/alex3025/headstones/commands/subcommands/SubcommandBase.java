@@ -1,5 +1,6 @@
 package tk.alex3025.headstones.commands.subcommands;
 
+import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,10 +10,14 @@ import java.util.List;
 
 public abstract class SubcommandBase {
 
+    @Getter
     private static final List<SubcommandBase> registeredSubcommands = new ArrayList<>();
 
+    @Getter
     private final String name;
+    @Getter
     private String permission = null;
+    @Getter
     private boolean playersOnly = false;
 
     public SubcommandBase(@NotNull String name) {
@@ -33,27 +38,12 @@ public abstract class SubcommandBase {
     public abstract boolean onCommand(CommandSender sender, String[] args);
 
     public boolean hasPermission(CommandSender sender) {
-        return this.getPermission() == null || (this.getPermission() != null && sender.hasPermission(this.getPermission()));
+        return this.getPermission() == null || sender.hasPermission(this.getPermission());
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public String getPermission() {
-        return this.permission;
-    }
-
-    public boolean isPlayersOnly() {
-        return this.playersOnly;
-    }
 
     public void registerSubcommand() {
         registeredSubcommands.add(this);
-    }
-
-    public static List<SubcommandBase> getRegisteredSubcommands() {
-        return registeredSubcommands;
     }
 
     public static @Nullable SubcommandBase getSubcommand(String subcommand) {
