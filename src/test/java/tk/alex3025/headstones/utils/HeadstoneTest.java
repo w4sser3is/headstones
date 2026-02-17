@@ -17,10 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import tk.alex3025.headstones.Headstones;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -130,39 +127,73 @@ class HeadstoneTest {
         when(hsSection.getDouble("z")).thenReturn(10.0);
         when(hsSection.getString("owner")).thenReturn(UUID.randomUUID().toString());
 
-        World worldMock = location.getWorld();
-        // Location constructor does NOT check isLoaded if we pass a mock that mocks it?
-        // Actually new Location(world, ...) calls world.getClass() etc?
-        // The error "World unloaded" comes from Location.getWorld() -> Preconditions.checkArgument.
-        // So we need to ensure mock(World.class) returns isLoaded() = true?
-        // But isLoaded() is not in World interface in older versions? It seems it is effectively checking something.
-        // Wait, the stacktrace showed Location.getWorld(Location.java:110).
-        // If we look at Bukkit source, Location methods check validity.
-        // Whatever, we try to mock it.
-
-        // But wait, "Location" is a concrete class. "World" is an interface.
-        // If I mock World, calling location.getWorld() returns the mock.
-        // The check inside Location.getWorld() does:
-        // if (world == null) return null;
-        // if (!world.isLoaded()) throw ...
-        // So yes, we need to mock isLoaded(). Or similar depending on version.
-        // World interface usually doesn't have isLoaded()?
-        // Actually, it seems implementation detail.
-        // But let's try assuming there is no isLoaded method on interface and Location uses something else?
-        // Check stack trace: `com.google.common.base.Preconditions.checkArgument`
-
-        // If World is mocked, method calls return defaults (false/null/0).
-        // So we need to stub whatever check it does.
-        // If the method doesn't exist on interface, Mockito can't mock it unless we cast?
-        // But World is interface.
-
         mockedBukkit.when(() -> Bukkit.getWorld("world")).thenReturn(location.getWorld());
         mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(mock(OfflinePlayer.class));
 
-        Headstone headstone = Headstone.fromLocation(location);
+        Headstone headstone = Headstone.fromLocation(location, null);
 
         assertNotNull(headstone);
         assertEquals(location, headstone.getLocation());
+    }
+
+    @Test
+    void testFromLocationWithMultipleHeads() {
+        World world = mock(World.class);
+        Location location = new Location(world, 10, 64, 10);
+        Player player = mock(Player.class);
+        UUID playerUUID = UUID.randomUUID();
+        when(player.getUniqueId()).thenReturn(playerUUID);
+
+        ConfigurationSection headstonesSection = mock(ConfigurationSection.class);
+        when(configFile.getConfigurationSection("headstones")).thenReturn(headstonesSection);
+
+        String uuid1 = "uuid1";
+        String uuid2 = "uuid2";
+        Set<String> keys = new LinkedHashSet<>();
+        keys.add(uuid1);
+        keys.add(uuid2);
+        when(headstonesSection.getKeys(false)).thenReturn(keys);
+
+        ConfigurationSection hs1 = mock(ConfigurationSection.class);
+        ConfigurationSection hs2 = mock(ConfigurationSection.class);
+        when(headstonesSection.getConfigurationSection(uuid1)).thenReturn(hs1);
+        when(headstonesSection.getConfigurationSection(uuid2)).thenReturn(hs2);
+
+        // hs1 belongs to someone else
+        when(hs1.getString("world")).thenReturn("world");
+        when(hs1.getDouble("x")).thenReturn(10.0);
+        when(hs1.getDouble("y")).thenReturn(64.0);
+        when(hs1.getDouble("z")).thenReturn(10.0);
+        when(hs1.getString("owner")).thenReturn(UUID.randomUUID().toString());
+
+        // hs2 belongs to the player
+        when(hs2.getString("world")).thenReturn("world");
+        when(hs2.getDouble("x")).thenReturn(10.0);
+        when(hs2.getDouble("y")).thenReturn(64.0);
+        when(hs2.getDouble("z")).thenReturn(10.0);
+        when(hs2.getString("owner")).thenReturn(playerUUID.toString());
+
+        mockedBukkit.when(() -> Bukkit.getWorld(anyString())).thenReturn(world);
+        OfflinePlayer otherOwner = mock(OfflinePlayer.class);
+        when(otherOwner.getUniqueId()).thenReturn(UUID.randomUUID());
+        OfflinePlayer playerOwner = mock(OfflinePlayer.class);
+        when(playerOwner.getUniqueId()).thenReturn(playerUUID);
+
+        mockedBukkit.when(() -> Bukkit.getOfflinePlayer(any(UUID.class))).thenAnswer(invocation -> {
+            UUID arg = invocation.getArgument(0);
+            if (arg.equals(playerUUID)) return playerOwner;
+            return otherOwner;
+        });
+
+        // If we don't pass player, it should return the first one (hs1)
+        Headstone result1 = Headstone.fromLocation(location, null);
+        assertNotNull(result1);
+        assertNotEquals(playerUUID, result1.getOwner().getUniqueId());
+
+        // If we pass player, it should return hs2
+        Headstone result2 = Headstone.fromLocation(location, player);
+        assertNotNull(result2);
+        assertEquals(playerUUID, result2.getOwner().getUniqueId());
     }
 
     @Test
@@ -196,7 +227,7 @@ class HeadstoneTest {
         Material mockMaterial = mock(Material.class);
         when(block.getType()).thenReturn(mockMaterial);
         // And mock isEmpty() on it
-        when(mockMaterial.isEmpty()).thenReturn(false);
+        when(mockMaterial.isAir()).thenReturn(false);
 
         Headstone headstone = new Headstone(player);
         PlayerDeathEvent event = mock(PlayerDeathEvent.class);
@@ -271,7 +302,7 @@ class HeadstoneTest {
         // Use Material.DIRT. Accessing it shouldn't crash unless static init block runs logic.
         when(block.getType()).thenReturn(Material.DIRT);
 
-        Headstone result = Headstone.fromBlock(block);
+        Headstone result = Headstone.fromBlock(block, null);
         assertNull(result);
     }
 

@@ -65,7 +65,7 @@ class BlockBreakListenerTest {
 
         when(event.getBlock()).thenReturn(block);
         when(event.getPlayer()).thenReturn(opponent);
-        when(Headstone.fromBlock(block)).thenReturn(headstone);
+        when(Headstone.fromBlock(block, opponent)).thenReturn(headstone);
 
         // Setup owner and opponent
         UUID ownerId = UUID.randomUUID();
@@ -101,7 +101,7 @@ class BlockBreakListenerTest {
 
         when(event.getBlock()).thenReturn(block);
         when(event.getPlayer()).thenReturn(opponent);
-        when(Headstone.fromBlock(block)).thenReturn(headstone);
+        when(Headstone.fromBlock(block, opponent)).thenReturn(headstone);
 
         // Setup owner and opponent
         UUID ownerId = UUID.randomUUID();
@@ -137,7 +137,7 @@ class BlockBreakListenerTest {
 
         when(event.getBlock()).thenReturn(block);
         when(event.getPlayer()).thenReturn(opponent);
-        when(Headstone.fromBlock(block)).thenReturn(headstone);
+        when(Headstone.fromBlock(block, opponent)).thenReturn(headstone);
 
         when(headstone.isOwner(opponent)).thenReturn(false);
         when(headstone.getOwner()).thenReturn(owner); // getOwner returns OfflinePlayer

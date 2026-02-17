@@ -17,6 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
+        <lombok.version>1.18.42</lombok.version>
         <wildloaders.version>2025.2</wildloaders.version>
         <junit.version>5.10.0</junit.version>
         <mockito.version>5.5.0</mockito.version>
@@ -36,7 +37,15 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <release>21</release>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -111,6 +120,12 @@
             <artifactId>paper-api</artifactId>
             <version>${paper.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

@@ -1,5 +1,7 @@
 package tk.alex3025.headstones.utils;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -20,13 +22,18 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
+@Slf4j
 public class Headstone {
 
     private final String uuid;
+    @Getter
     private final OfflinePlayer owner;
+    @Getter
     private final Location location;
+    @Getter
     private final long timestamp;
     private final int experience;
+    @Getter
     private final ItemStack[] inventory;
 
     public Headstone(@NotNull Player player) {
@@ -63,7 +70,7 @@ public class Headstone {
                     try {
                         inventory = InventorySerializer.deserialize(hs.getString("inventory"));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error("Failed to deserialize inventory for headstone with UUID: {}", uuid, e);
                     }
 
                 OfflinePlayer owner = Bukkit.getOfflinePlayer(UUID.fromString(hs.getString("owner")));
@@ -73,21 +80,32 @@ public class Headstone {
         return null;
     }
 
-    public static @Nullable Headstone fromLocation(Location location) {
+    public static @Nullable Headstone fromLocation(Location location, @Nullable Player player) {
         ConfigurationSection headstones = Headstone.getHeadstonesData().getConfigurationSection("headstones");
 
-        if (headstones != null)
+        if (headstones != null) {
+            List<Headstone> foundHeadstones = new ArrayList<>();
             for (String uuid : headstones.getKeys(false)) {
                 Headstone hs = Headstone.fromUUID(uuid);
-                if (hs != null)
-                    if (location.equals(hs.getLocation()))
+                if (hs != null && location.equals(hs.getLocation())) {
+                    if (player != null && hs.isOwner(player))
                         return hs;
+                    foundHeadstones.add(hs);
+                }
             }
+
+            if (!foundHeadstones.isEmpty())
+                return foundHeadstones.getFirst();
+        }
         return null;
     }
 
-    public static @Nullable Headstone fromBlock(@NotNull Block block) {
-        return block.getType().equals(Material.PLAYER_HEAD) ? Headstone.fromLocation(block.getLocation()) : null;
+    public static @Nullable Headstone fromBlock(@NotNull Block block, @Nullable Player player) {
+        return block.getType().equals(Material.PLAYER_HEAD) ? Headstone.fromLocation(block.getLocation(), player) : null;
+    }
+
+    public static ConfigFile getHeadstonesData() {
+        return Headstones.getInstance().getDatabase();
     }
 
     public void onPlayerDeath(PlayerDeathEvent event, boolean keepExperience, boolean keepInventory) {
@@ -175,8 +193,8 @@ public class Headstone {
         for (int x = playerX - radius; x <= playerX + radius; x++) {
             for (int y = playerY - radius; y <= playerY + radius; y++)
                 for (int z = playerZ - radius; z <= playerZ + radius; z++) {
-                    Block block = this.location.getWorld().getBlockAt(x,y,z);
-                    if (block.getType().isEmpty())
+                    Block block = this.location.getWorld().getBlockAt(x, y, z);
+                    if (block.getType().isAir())
                         return block;
                 }
 
@@ -217,30 +235,6 @@ public class Headstone {
 
     public boolean isOwner(@NotNull Player player) {
         return player.getUniqueId().equals(this.owner.getUniqueId());
-    }
-
-    public OfflinePlayer getOwner() {
-        return this.owner;
-    }
-
-    public Location getLocation() {
-        return this.location;
-    }
-
-    public long getTimestamp() {
-        return this.timestamp;
-    }
-
-    public ItemStack[] getInventory() {
-        return this.inventory;
-    }
-
-    public int getExperience() {
-        return this.experience;
-    }
-
-    public static ConfigFile getHeadstonesData() {
-        return Headstones.getInstance().getDatabase();
     }
 
 }
