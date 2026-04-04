@@ -32,3 +32,16 @@ some-items-dropped: '&cSome items were dropped on the ground!'
 # Destroy all command messages
 all-headstones-destroyed: '&aAll headstones of &f%username%&a have been destroyed. (%count% headstones)'
 headstones-restored: '&aYour &f%count%&a headstones have been restored with &f%experience%&a experience!'
+
+# Unplaced command messages
+usage-unplaced: '&cUsage: /hs unplaced <list|restore>'
+usage-unplaced-restore: '&cUsage: /hs unplaced restore <id>'
+no-unplaced-headstones: '&aThere are currently no unplaced headstones.'
+unplaced-list-header: '&aUnplaced Headstones:'
+unplaced-list-item: '&7- &f%id% &7(&b%player%&7, &a%date%&7)'
+unplaced-not-found: '&cUnplaced headstone with that ID not found.'
+unplaced-invalid-data: '&cThe unplaced headstone contains invalid data.'
+player-not-online: '&cThe player needs to be online to restore their unplaced headstone.'
+unplaced-restore-error: '&cAn error occurred while restoring the unplaced headstone inventory.'
+unplaced-restored-admin: '&aSuccessfully restored unplaced headstone to &f%player%&a.'
+unplaced-restored-player: '&aAn admin has restored your unplaced headstone items and experience!'

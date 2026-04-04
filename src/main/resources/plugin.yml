@@ -20,6 +20,9 @@ permissions:
   headstones.cleardb:
     description: Dangerous command to make all the existing heastones useless.
     default: op
+  headstones.unplaced:
+    description: Allows managing unplaced headstones.
+    default: op
   headstones.keep-experience:
     description: Allows the player to get his experience back when he breaks its headstone.
     default: true

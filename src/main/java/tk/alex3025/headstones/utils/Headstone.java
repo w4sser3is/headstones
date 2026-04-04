@@ -119,6 +119,12 @@ public class Headstone {
             event.setShouldDropExperience(false);
 
             this.savePlayerData(skullLocation, keepExperience, keepInventory);
+        } else {
+            // Failed to place skull, save as unplaced headstone
+            event.getDrops().clear();
+            event.setShouldDropExperience(false);
+
+            this.saveUnplacedData(keepExperience, keepInventory);
         }
     }
 
@@ -156,6 +162,23 @@ public class Headstone {
             hs.set("inventory", InventorySerializer.serialize(this.inventory));
 
         headstonesFile.save();
+    }
+
+    private void saveUnplacedData(boolean keepExperience, boolean keepInventory) {
+        ConfigFile headstonesFile = Headstone.getHeadstonesData();
+        ConfigurationSection hs = headstonesFile.createSection("unplaced_headstones." + this.uuid);
+
+        hs.set("owner", this.owner.getUniqueId().toString());
+        hs.set("timestamp", Instant.now().toEpochMilli());
+
+        if (keepExperience)
+            hs.set("experience", this.experience);
+
+        if (keepInventory)
+            hs.set("inventory", InventorySerializer.serialize(this.inventory));
+
+        headstonesFile.save();
+        log.warn("Failed to place headstone for player {}, saved as unplaced headstone with UUID: {}", this.owner.getName(), this.uuid);
     }
 
     public void deletePlayerData() {
