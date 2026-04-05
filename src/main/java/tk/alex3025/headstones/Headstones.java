@@ -22,8 +22,34 @@ public final class Headstones extends JavaPlugin {
         instance = this;
 
         this.loadConfigurationFiles();
+        this.cleanupOldUnplacedHeadstones();
         this.registerListeners();
         this.registerCommands();
+    }
+
+    private void cleanupOldUnplacedHeadstones() {
+        org.bukkit.configuration.ConfigurationSection unplaced = this.database.getConfigurationSection("unplaced_headstones");
+        if (unplaced != null) {
+            long now = System.currentTimeMillis();
+            long sevenDaysInMillis = 7L * 24 * 60 * 60 * 1000;
+            boolean modified = false;
+
+            for (String key : unplaced.getKeys(false)) {
+                org.bukkit.configuration.ConfigurationSection hs = unplaced.getConfigurationSection(key);
+                if (hs != null) {
+                    long timestamp = hs.getLong("timestamp", 0);
+                    if (now - timestamp > sevenDaysInMillis) {
+                        unplaced.set(key, null);
+                        modified = true;
+                    }
+                }
+            }
+
+            if (modified) {
+                this.database.save();
+                getLogger().info("Cleaned up old unplaced headstones.");
+            }
+        }
     }
 
     @Override
@@ -53,6 +79,7 @@ public final class Headstones extends JavaPlugin {
         new ListHeadstonesCommand();
         new TeleportHeadstoneCommand();
         new DestroyHeadstoneCommand();
+        new UnplacedHeadstonesCommand();
     }
 
     public static Headstones getInstance() {

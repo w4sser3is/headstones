@@ -233,6 +233,13 @@ class HeadstoneTest {
         PlayerDeathEvent event = mock(PlayerDeathEvent.class);
         when(event.getDrops()).thenReturn(new java.util.ArrayList<>());
 
+        // Note: Headstones instance is already statically mocked in the setUp() method of this class.
+        // We just need to ensure the existing mock instance returns a mock database.
+        ConfigFile mockConfigFile = mock(ConfigFile.class);
+        ConfigurationSection mockSection = mock(ConfigurationSection.class);
+        when(mockConfigFile.createSection(anyString())).thenReturn(mockSection);
+        when(Headstones.getInstance().getDatabase()).thenReturn(mockConfigFile);
+
         headstone.onPlayerDeath(event, true, true);
 
         // Verify it tried to check for safe block
