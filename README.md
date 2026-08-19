@@ -10,6 +10,7 @@ To get the stuff back, only the player who died can break its headstone.
 |---|---|---|
 | `/hs list` | `headstones.list` | Shows a numbered list of your active headstones with their coordinates. |
 | `/hs tp <number>` | `headstones.tp` | Teleports you to the specified headstone. |
+| `/hs destroy <player>` | `headstones.destroy` | Destroys all headstones of a player and returns their items and experience. |
 | `/hs reload` | `headstones.reload` | Reloads the configuration and messages. |
 | `/hs cleardb` | `headstones.cleardb` | Clears all saved headstones data. |
 | `/hs unplaced <list\|restore>` | `headstones.unplaced` | Manage and restore unplaced headstones. |
@@ -26,6 +27,7 @@ To get the stuff back, only the player who died can break its headstone.
 | `headstones.reload` | `op` | Allows reloading the plugin. |
 | `headstones.cleardb` | `op` | Allows clearing the database. |
 | `headstones.unplaced` | `op` | Allows managing unplaced headstones. |
+| `headstones.destroy` | `op` | Allows destroying all headstones of a player and restoring their items and experience. |
 | `headstones.disabled.<world_name>` | `false` | Disables headstones in a specific world. |
 
 ## Release Notes

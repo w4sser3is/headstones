@@ -38,6 +38,12 @@ public class DestroyHeadstoneCommand extends SubcommandBase {
             return true;
         }
 
+        // do not destroy headstones of offline players, otherwise their items and experience would be lost
+        if (!targetPlayer.isOnline() || targetPlayer.getPlayer() == null) {
+            new Message(sender).translation("player-not-online").send();
+            return true;
+        }
+
         List<ConfigurationSection> playerHeadstones = HeadstoneUtils.getPlayerHeadstones(targetPlayer.getUniqueId());
 
         if (playerHeadstones.isEmpty()) {
@@ -86,7 +92,8 @@ public class DestroyHeadstoneCommand extends SubcommandBase {
 
             // Restore experience
             if (totalExperience > 0) {
-                ExperienceManager.setExperience(onlinePlayer, totalExperience);
+                int currentExp = ExperienceManager.getExperience(onlinePlayer);
+                ExperienceManager.setExperience(onlinePlayer, currentExp + totalExperience);
             }
 
             // Restore items - try to add to inventory, drop excess at player's location

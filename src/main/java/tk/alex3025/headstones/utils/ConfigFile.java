@@ -1,5 +1,6 @@
 package tk.alex3025.headstones.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tk.alex3025.headstones.Headstones;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ConfigFile extends YamlConfiguration {
 
     private final static List<ConfigFile> CONFIGS = new ArrayList<>();
@@ -22,7 +24,7 @@ public class ConfigFile extends YamlConfiguration {
         try {
             this.createOrLoadConfig(filename);
         } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         CONFIGS.add(this);
@@ -44,7 +46,7 @@ public class ConfigFile extends YamlConfiguration {
             this.save(this.file);
             this.reload();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 
@@ -52,12 +54,12 @@ public class ConfigFile extends YamlConfiguration {
         try {
             this.load(this.file);
         } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (IOException ignored) {
             try {
                 this.createOrLoadConfig(this.file.getName());
             } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         }
     }
