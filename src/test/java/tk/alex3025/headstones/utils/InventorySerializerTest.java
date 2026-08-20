@@ -29,7 +29,7 @@ class InventorySerializerTest {
         // 1. new BukkitObjectOutputStream
         // 2. dataOutput.writeInt
         // 3. item.serializeAsBytes()
-        // 4. Base64Coder.encodeLines
+        // 4. Base64.getEncoder().encodeToString
 
         // If we cannot mock BukkitObjectOutputStream constructor, we might rely on it being "simple enough".
         // BUT, BukkitObjectOutputStream might check for YAML configuration or Server instance.
@@ -67,7 +67,7 @@ class InventorySerializerTest {
             verify(mockBoos).writeObject(bytes); // item 1
             verify(mockBoos).writeObject(null); // item 2
 
-            // The result comes from `Base64Coder.encodeLines(outputStream.toByteArray())`.
+            // The result comes from `Base64.getEncoder().encodeToString(outputStream.toByteArray())`.
             // Since `outputStream` was passed to the REAL constructor of `BukkitObjectOutputStream` (which we mocked), nothing was written to `outputStream` because we mocked the writer!
             // So `outputStream.toByteArray()` will be empty.
 
@@ -84,20 +84,16 @@ class InventorySerializerTest {
 
     @Test
     void testDeserialize() {
-        String data = "somebase64data";
+        String data = "AA==";
 
-        // deserialize calls Base64Coder.decodeLines -> ByteArrayInputStream -> BukkitObjectInputStream -> readInt -> readObject -> ItemStack.deserializeBytes
+        // deserialize calls Base64.getMimeDecoder().decode -> ByteArrayInputStream -> BukkitObjectInputStream -> readInt -> readObject -> ItemStack.deserializeBytes
 
-        try (MockedStatic<org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder> mockedBase64 = mockStatic(org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder.class);
-             MockedConstruction<BukkitObjectInputStream> mockedBois = mockConstruction(BukkitObjectInputStream.class,
+        try (MockedConstruction<BukkitObjectInputStream> mockedBois = mockConstruction(BukkitObjectInputStream.class,
                      (mock, context) -> {
                          when(mock.readInt()).thenReturn(2);
                          when(mock.readObject()).thenReturn(new byte[]{1,2,3}).thenReturn(null);
                      });
              MockedStatic<ItemStack> mockedItemStack = mockStatic(ItemStack.class)) {
-
-            mockedBase64.when(() -> org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder.decodeLines(anyString()))
-                    .thenReturn(new byte[]{0});
 
             ItemStack deserializedItem = mock(ItemStack.class);
             mockedItemStack.when(() -> ItemStack.deserializeBytes(any(byte[].class))).thenReturn(deserializedItem);
